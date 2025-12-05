@@ -19,8 +19,17 @@ BIG_GOV_DATASETS = os.path.join(BASE_DIR, "big_gov_datasets.txt")
 # ============================================================================
 # MODEL CONFIGURATION
 # ============================================================================
-# BERT QA Model
+# BERT QA Models - Multiple models to use for question answering
+QA_MODELS = [
+    "salti/bert-base-multilingual-cased-finetuned-squad",
+    "KB/bert-base-swedish-cased-squad-experimental",
+    "deepset/roberta-base-squad2-covid"
+]
+
+# Default QA Model (for backward compatibility)
 QA_MODEL_NAME = "salti/bert-base-multilingual-cased-finetuned-squad"
+
+# QA Model Parameters
 QA_MAX_SEQ_LENGTH = 512
 QA_MAX_ANSWER_LENGTH = 64
 QA_BATCH_SIZE = 16

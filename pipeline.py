@@ -5,6 +5,7 @@ Orchestrates all three phases and generates final predictions.
 
 import pandas as pd
 import os
+import time
 from typing import Optional
 import config
 import utils
@@ -85,11 +86,14 @@ class DEFNLPPipeline:
         Returns:
             DataFrame with final predictions
         """
+        # Start total pipeline timer
+        pipeline_start_time = time.time()
+        
         # Use defaults from config if not provided
         test_csv_path = test_csv_path or config.TEST_CSV
         test_json_dir = test_json_dir or config.TEST_JSON_DIR
         train_csv_path = train_csv_path or config.TRAIN_CSV
-        output_path = output_path or os.path.join(config.OUTPUT_DIR, "predictions.csv")
+        output_path = output_path or os.path.join(config.OUTPUT_DIR, "predictions2.csv")
         
         print("\n" + "="*60)
         print("RUNNING DEFNLP INFERENCE")
@@ -109,13 +113,22 @@ class DEFNLPPipeline:
             train_df = pd.read_csv(train_csv_path)
         
         # Run Phase I
+        phase1_start = time.time()
         test_df = self.phase1.process(test_df, test_json_dir, train_df)
+        phase1_time = time.time() - phase1_start
+        print(f"\n⏱️  Phase I completed in {phase1_time:.2f} seconds ({phase1_time/60:.2f} minutes)")
         
         # Run Phase II
+        phase2_start = time.time()
         test_df = self.phase2.process(test_df)
+        phase2_time = time.time() - phase2_start
+        print(f"\n⏱️  Phase II completed in {phase2_time:.2f} seconds ({phase2_time/60:.2f} minutes)")
         
         # Run Phase III
+        phase3_start = time.time()
         test_df = self.phase3.process(test_df)
+        phase3_time = time.time() - phase3_start
+        print(f"\n⏱️  Phase III completed in {phase3_time:.2f} seconds ({phase3_time/60:.2f} minutes)")
         
         # Merge all predictions
         test_df = self.merge_all_predictions(test_df)
@@ -127,8 +140,18 @@ class DEFNLPPipeline:
         utils.create_output_directory()
         utils.save_predictions(output_df, output_path)
         
+        # Calculate total time
+        total_time = time.time() - pipeline_start_time
+        
         print("\n" + "="*60)
         print("INFERENCE COMPLETE")
+        print("="*60)
+        print("\n📊 TIMING SUMMARY:")
+        print(f"  Phase I (Baseline):     {phase1_time:.2f}s ({phase1_time/60:.2f} min)")
+        print(f"  Phase II (NER & QA):    {phase2_time:.2f}s ({phase2_time/60:.2f} min)")
+        print(f"  Phase III (Acronyms):   {phase3_time:.2f}s ({phase3_time/60:.2f} min)")
+        print(f"  {'─'*40}")
+        print(f"  TOTAL PIPELINE TIME:    {total_time:.2f}s ({total_time/60:.2f} min)")
         print("="*60)
         
         return output_df

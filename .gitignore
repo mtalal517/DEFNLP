@@ -73,3 +73,9 @@ train/
 #add venv folder
 .venv/
 
+#add .env file
+.env
+.env.local
+.env.development
+.env.test
+.env.production 

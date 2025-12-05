@@ -10,7 +10,7 @@ import os
 # ============================================================================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TRAIN_CSV = os.path.join(BASE_DIR, "train.csv")
-TEST_CSV = os.path.join(BASE_DIR, "sample_submission.csv")
+TEST_CSV = os.path.join(BASE_DIR, "test.csv")
 TRAIN_JSON_DIR = os.path.join(BASE_DIR, "train")
 TEST_JSON_DIR = os.path.join(BASE_DIR, "test")
 OUTPUT_DIR = os.path.join(BASE_DIR, "output")

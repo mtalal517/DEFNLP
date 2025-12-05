@@ -70,3 +70,6 @@ transformers_cache/
 test/
 train/
 
+#add venv folder
+.venv/
+
